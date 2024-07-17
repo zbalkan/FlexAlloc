@@ -20,7 +20,7 @@ size_t getSystemPageSize() {
 /// On success, returns a memory_block with a valid pointer and actual size.
 /// On failure, returns a memory_block with ptr == NULL and size == 0.
 memory_block allocate(size_t size, size_t alignment) {
-    memory_block result = {NULL, 0};
+    memory_block result = { NULL, 0 };
 
     // Ensure alignment is a power of two
     if ((alignment & (alignment - 1)) != 0) {
@@ -33,7 +33,8 @@ memory_block allocate(size_t size, size_t alignment) {
         if (result.ptr != NULL) {
             result.size = size;
         }
-    } else {
+    }
+    else {
         // For larger alignments, allocate extra memory and align manually
         size_t totalSize = size + alignment;
         void* rawPtr = VirtualAlloc(NULL, totalSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -57,7 +58,8 @@ void deallocate(memory_block block, size_t alignment) {
     size_t pageSize = getSystemPageSize();
     if (alignment <= pageSize) {
         VirtualFree(block.ptr, 0, MEM_RELEASE);
-    } else {
+    }
+    else {
         // Handle larger alignments, if allocated with custom methods
         VirtualFree((void*)((uintptr_t)block.ptr & ~(pageSize - 1)), 0, MEM_RELEASE);
     }
@@ -67,12 +69,17 @@ void deallocate(memory_block block, size_t alignment) {
 /// Returns 1 if successful, otherwise 0.
 int try_expand(memory_block* block, size_t new_size) {
     if (block->ptr != NULL) {
-        HANDLE hHeap = GetProcessHeap();
-        void* new_ptr = HeapReAlloc(hHeap, HEAP_REALLOC_IN_PLACE_ONLY, block->ptr, new_size);
-        if (new_ptr != NULL) {
-            block->ptr = new_ptr;
-            block->size = new_size;
-            return 1;
+        // Calculate the current allocation size with alignment
+        size_t alignment = getSystemPageSize();
+        void* alignedPtr = (void*)((uintptr_t)block->ptr & ~(alignment - 1));
+
+        MEMORY_BASIC_INFORMATION mbi;
+        if (VirtualQuery(block->ptr, &mbi, sizeof(mbi)) == sizeof(mbi)) {
+            size_t availableSize = mbi.RegionSize - ((uintptr_t)block->ptr - (uintptr_t)mbi.BaseAddress);
+            if (availableSize >= new_size) {
+                block->size = new_size;
+                return 1;
+            }
         }
     }
     return 0;

@@ -9,14 +9,13 @@ void test_allocate() {
     size_t size = 1024;
     size_t alignment = 16;
     memory_block block = allocate(size, alignment);
-    char buffer[100];
 
     if (block.ptr != NULL && block.size >= size) {
-        sprintf_s(buffer, sizeof(buffer), "test_allocate: PASSED\n");
-    } else {
-        sprintf_s(buffer, sizeof(buffer), "test_allocate: FAILED\n");
+        secure_print("test_allocate: PASSED\n");
     }
-    secure_print(buffer);
+    else {
+        secure_print("test_allocate: FAILED\n");
+    }
 
     deallocate(block, alignment);
 }
@@ -25,11 +24,9 @@ void test_deallocate() {
     size_t size = 1024;
     size_t alignment = 16;
     memory_block block = allocate(size, alignment);
-    char buffer[100];
 
     if (block.ptr == NULL) {
-        sprintf_s(buffer, sizeof(buffer), "test_deallocate: FAILED (allocation failed)\n");
-        secure_print(buffer);
+        secure_print("test_deallocate: FAILED (allocation failed)\n");
         return;
     }
 
@@ -38,11 +35,11 @@ void test_deallocate() {
     // Check if memory is successfully deallocated by trying to reallocate it
     memory_block block2 = allocate(size, alignment);
     if (block2.ptr != NULL) {
-        sprintf_s(buffer, sizeof(buffer), "test_deallocate: PASSED\n");
-    } else {
-        sprintf_s(buffer, sizeof(buffer), "test_deallocate: FAILED\n");
+        secure_print("test_deallocate: PASSED\n");
     }
-    secure_print(buffer);
+    else {
+        secure_print("test_deallocate: FAILED\n");
+    }
 
     deallocate(block2, alignment);
 }
@@ -52,20 +49,18 @@ void test_try_expand() {
     size_t new_size = 2048;
     size_t alignment = 16;
     memory_block block = allocate(size, alignment);
-    char buffer[100];
 
     if (block.ptr == NULL) {
-        sprintf_s(buffer, sizeof(buffer), "test_try_expand: FAILED (allocation failed)\n");
-        secure_print(buffer);
+        secure_print("test_try_expand: FAILED (allocation failed)\n");
         return;
     }
 
     if (try_expand(&block, new_size)) {
-        sprintf_s(buffer, sizeof(buffer), "test_try_expand: PASSED\n");
-    } else {
-        sprintf_s(buffer, sizeof(buffer), "test_try_expand: FAILED\n");
+        secure_print("test_try_expand: PASSED\n");
     }
-    secure_print(buffer);
+    else {
+        secure_print("test_try_expand: FAILED\n");
+    }
 
     deallocate(block, alignment);
 }
