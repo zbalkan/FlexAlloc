@@ -1,3 +1,6 @@
+//  SPDX-FileCopyrightText: 2024 Zafer Balkan <zafer@zaferbalkan.com>
+//  SPDX-License-Identifier: MIT
+
 #ifndef FLEX_ALLOC_H
 #define FLEX_ALLOC_H
 
