@@ -42,7 +42,9 @@ I developed the samples in Visual Studio. In order to run , just open the soluti
 
 ### FlexAlloc.Demo
 
-The demo application creates a `DynamicArray` in C. For the sake of simiplicity, it is an array of integers with an initial capacity of 4. Then the size doubles when size gets larger than existing capacity.
+The demo application creates a `DynamicArray` in C. For the sake of simplicity, it is an array of integers with an initial capacity of 4. Then the size doubles when size gets larger than existing capacity.
+
+![Screenshot of the demo application](demo.png "Demo app")
 
 ### FlexAlloc.Tests
 
