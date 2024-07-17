@@ -7,6 +7,7 @@
 #define INITIAL_CAPACITY 4
 #define ALIGNMENT 16
 #define COMMAND_SIZE 10
+#define INPUT_BUFFER_SIZE 50
 
 // Dynamic array structure
 typedef struct {
@@ -119,33 +120,39 @@ int main() {
     DynamicArray array;
     initArray(&array, INITIAL_CAPACITY, ALIGNMENT);
 
+    char input[INPUT_BUFFER_SIZE];
     char command[COMMAND_SIZE];
     int value;
 
     while (1) {
         printf("Enter 'add <value>' to add an element, 'print' to display the array, or 'exit' to quit: ");
-        if (scanf("%9s", command) != 1) {
+        if (fgets(input, sizeof(input), stdin) == NULL) {
             continue;
         }
 
-        if (safe_strcmp(command, "exit") == 0) {
-            break;
+        // Remove the newline character at the end if it exists
+        size_t len = strlen(input);
+        if (len > 0 && input[len - 1] == '\n') {
+            input[len - 1] = '\0';
         }
 
-        if (safe_strcmp(command, "add") == 0) {
-            if (scanf("%d", &value) != 1) {
-                printf("Invalid value. Please enter an integer.\n");
-                // Clear the input buffer
-                int c;
-                while ((c = getchar()) != '\n' && c != EOF);
-                continue;
+        if (sscanf(input, "%9s %d", command, &value) == 2) {
+            if (safe_strcmp(command, "add") == 0) {
+                processCommand(&array, command, value);
+            }
+            else {
+                printf("Invalid command format. Please use 'add <value>'.\n");
             }
         }
-        else {
-            value = 0; // No value needed for other commands
+        else if (sscanf(input, "%9s", command) == 1) {
+            if (safe_strcmp(command, "exit") == 0) {
+                break;
+            }
+            processCommand(&array, command, 0);
         }
-
-        processCommand(&array, command, value);
+        else {
+            printf("Unknown command. Please try again.\n");
+        }
     }
 
     freeArray(&array);
