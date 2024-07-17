@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "../FlexAlloc.h"
+#include "FlexAlloc.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
